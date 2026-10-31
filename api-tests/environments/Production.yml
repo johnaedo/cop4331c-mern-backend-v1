@@ -1,9 +1,14 @@
-# Replace the address with your own server (your droplet IP address or domain)
 name: Production
 variables:
   - name: baseURL
     value: http://your-server-address:5000
+    description: ""
   - name: login
     value: johnaedo
+    description: ""
   - name: password
     value: ucf123!
+    description: ""
+  - name: cardName
+    value: Bugs Bunny
+    description: ""

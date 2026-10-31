@@ -2,7 +2,13 @@ name: Development
 variables:
   - name: baseURL
     value: http://localhost:5000
+    description: ""
   - name: login
     value: johnaedo
+    description: ""
   - name: password
     value: ucf123!
+    description: ""
+  - name: cardName
+    value: Bugs Bunny
+    description: ""

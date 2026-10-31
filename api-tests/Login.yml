@@ -37,7 +37,7 @@ runtime:
         });
 
         test("returns the user that logged in", function () {
-          expect(body.user.login).to.equal(bru.getEnvVar("login"));
+          expect(body.user.login).to.equal(bru.getEnvVar("newLogin"));
         });
 
         test("never returns the password", function () {
