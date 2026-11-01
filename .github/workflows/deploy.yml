@@ -70,13 +70,18 @@ jobs:
       # restart the service, and fail the deploy if the API doesn't answer.
       # SSH commands from here don't load nvm, so nvm-exec runs npm with
       # Node 26, exactly as the service runs node.
+      # cards-api is a user service that belongs to the deploy user, so
+      # restarting it needs no sudo. XDG_RUNTIME_DIR tells systemctl --user
+      # where to find deploy's service manager. (\$ means "expand this on
+      # the droplet", not here on GitHub.)
       - name: Install and restart on the droplet
         if: github.event_name == 'push' && env.SSH_HOST != ''
         run: |
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" "
             set -e
+            export XDG_RUNTIME_DIR=/run/user/\$(id -u)
             cd $APP_DIR
             NODE_VERSION=26 ~/.nvm/nvm-exec npm ci --omit=dev
-            sudo systemctl restart cards-api
+            systemctl --user restart cards-api
             curl -fsS --retry 10 --retry-delay 2 --retry-connrefused http://localhost:5000/api/ping
           "
