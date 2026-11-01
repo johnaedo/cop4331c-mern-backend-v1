@@ -1,0 +1,39 @@
+# systemd service that keeps the Cards API running on the droplet.
+#
+# Install it once (see tutorials/07-deploy-backend):
+#   scp deploy/cards-api.service root@YOUR-SERVER:/etc/systemd/system/
+#   ssh root@YOUR-SERVER "systemctl daemon-reload && systemctl enable cards-api"
+#
+# Useful commands on the droplet (as the deploy user):
+#   systemctl status cards-api          is it running?
+#   journalctl -u cards-api -f          follow its log (Ctrl+C to stop)
+#   sudo systemctl restart cards-api    restart it (the deploy workflow does this)
+
+[Unit]
+Description=Cards API (Node.js + Express)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# The deploy workflow copies the code here. server.js reads its settings
+# from the .env file in this folder.
+WorkingDirectory=/opt/cards-api
+
+# nvm installed Node inside the deploy user's home folder, where systemd
+# can't find it on its own. nvm-exec loads nvm, switches to the Node
+# version in NODE_VERSION, and then runs the command.
+Environment=NODE_VERSION=26
+Environment=NODE_ENV=production
+ExecStart=/home/deploy/.nvm/nvm-exec node server.js
+
+# Run as the unprivileged deploy user, not root
+User=deploy
+Group=deploy
+
+# Start again automatically if it crashes
+Restart=always
+RestartSec=5
+
+[Install]
+# Start at boot
+WantedBy=multi-user.target
